@@ -1,0 +1,92 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: traefik-ingress-controller
+  namespace: kube-system
+---
+kind: DaemonSet
+apiVersion: extensions/v1beta1
+metadata:
+  name: traefik-ingress-controller
+  namespace: kube-system
+  labels:
+    k8s-app: traefik-ingress-lb
+spec:
+  template:
+    metadata:
+      labels:
+        k8s-app: traefik-ingress-lb
+        name: traefik-ingress-lb
+    spec:
+      serviceAccountName: traefik-ingress-controller
+      terminationGracePeriodSeconds: 60
+      hostNetwork: true
+      nodeSelector:
+        edge: "true"
+      tolerations:
+      - effect: NoSchedule
+        operator: Exists
+      containers:
+      - image: fanfengqiang/traefik:1.7.10
+        name: traefik-ingress-lb
+        env:
+        - name: ALICLOUD_ACCESS_KEY
+          value: XXXXXXXXXXXXXXXX
+        - name: ALICLOUD_SECRET_KEY
+          value: XXXXXXXXXXXXXXXXXXXXXXXXX
+        ports:
+        - name: https
+          containerPort: 443
+          hostPort: 443
+        - name: http
+          containerPort: 80
+          hostPort: 80
+        - name: admin
+          containerPort: 8080
+          hostPort: 8080
+        securityContext:
+          capabilities:
+            drop:
+            - ALL
+            add:
+            - NET_BIND_SERVICE
+        args:
+        - --api
+        - --kubernetes
+        - --logLevel=INFO
+        - --insecureSkipVerify=true
+        - --defaultEntryPoints=http,https
+        - --entrypoints=Name:https Address::443 TLS
+        - --entrypoints=Name:http Address::80 Redirect.EntryPoint:https
+        - --acme
+        - --acme.acmeLogging=true 
+        - --acme.email=1415228958@qq.com
+        - --acme.entryPoint=https      
+        - --acme.dnschallenge
+        - --acme.storage=/tmp/acme.json
+        - --acme.httpchallenge.entrypoint=http
+        - --acme.dnschallenge.delaybeforecheck=5
+        - --acme.dnschallenge.provider=alidns
+        - --acme.domains=*.fanfengqiang.com
+        - --acme.domains=*.5ik8s.com
+        - --acme.domains=*.fanfengqiang.xyz
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: traefik-ingress-service
+  namespace: kube-system
+spec:
+  selector:
+    k8s-app: traefik-ingress-lb
+  ports:
+    - protocol: TCP
+      port: 80
+      name: web
+    - protocol: TCP
+      port: 443
+      name: https
+    - protocol: TCP
+      port: 8080
+      name: admin

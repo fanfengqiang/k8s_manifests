@@ -1,0 +1,16 @@
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: openldap
+  namespace: ldap
+  labels:
+    app: openldap
+spec:
+  accessModes:
+    - "ReadWriteOnce"
+  resources:
+    requests:
+      storage: "3Gi"
+  storageClassName: "glusterfs"
+

@@ -1,0 +1,15 @@
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: istio-jaeger-query
+  namespace: istio-system
+spec:
+  rules:
+  - host: istio-jaeger-query.5ik8s.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: jaeger-query
+          servicePort: 16686

@@ -1,0 +1,15 @@
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: istio-ingressgateway
+  namespace: istio-system
+spec:
+  rules:
+  - host: istio.5ik8s.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: istio-ingressgateway
+          servicePort: 80

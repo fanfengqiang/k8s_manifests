@@ -1,0 +1,15 @@
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: istio-prometheus
+  namespace: istio-system
+spec:
+  rules:
+  - host: istio-prometheus.5ik8s.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: prometheus
+          servicePort: 9090

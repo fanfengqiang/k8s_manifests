@@ -1,0 +1,29 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: phpldapadmin
+  name: phpldapadmin
+  namespace: ldap
+spec:
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: phpldapadmin
+    spec:
+      containers:
+      - env:
+        - name: PHPLDAPADMIN_HTTPS
+          value: "false"
+        - name: PHPLDAPADMIN_LDAP_HOSTS
+          value: ldap-service.ldap.svc.cluster.local
+        image: osixia/phpldapadmin:0.7.1
+        name: phpldapadmin
+        ports:
+        - containerPort: 80
+        resources: {}
+      restartPolicy: Always
