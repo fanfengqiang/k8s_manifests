@@ -1,0 +1,15 @@
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: phpldapadmin-ingress
+  namespace: kube-system
+spec:
+  rules:
+  - host: phpldapadmin.5ik8s.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: phpldapadmin
+          servicePort: 443

@@ -1,0 +1,15 @@
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: istio-ingressgateway-knative
+  namespace: istio-system
+spec:
+  rules:
+  - host: "*.example.com"
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: istio-ingressgateway
+          servicePort: 80
