@@ -49,13 +49,16 @@ data:
           -----END CERTIFICATE-----
         insecure-skip-tls-verify: false
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: loginapp
   namespace: kube-system
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: loginapp
   template:
     metadata:
       labels:
