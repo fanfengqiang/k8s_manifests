@@ -1,0 +1,70 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  namespace: kube-system
+  name: traefik-ingress-controller
+
+---
+kind: DaemonSet
+apiVersion: apps/v1
+metadata:
+  namespace: kube-system
+  name: traefik
+  labels:
+    app: traefik
+
+spec:
+  selector:
+    matchLabels:
+      app: traefik
+  template:
+    metadata:
+      labels:
+        app: traefik
+    spec:
+      serviceAccountName: traefik-ingress-controller
+      hostNetwork: true
+      nodeSelector:
+        edge: "true"
+      tolerations:
+      - effect: NoSchedule
+        operator: Exists
+      containers:
+        - name: traefik
+          image: traefik:v2.0
+          env:
+          - name: ALICLOUD_ACCESS_KEY
+            value: LTAIBMluxpeLyzLu
+          - name: ALICLOUD_SECRET_KEY
+            value: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+          args:
+            - --api.insecure
+            - --accesslog
+            - --serverstransport.insecureskipverify=true
+            - --metrics.prometheus=true
+            - --metrics.prometheus.entrypoint=metrics
+            - --entrypoints.metrics.address=:8082
+            - --entrypoints.web.Address=:80
+            - --entrypoints.websecure.Address=:443
+            - --providers.kubernetescrd
+            - --certificatesresolvers.default.acme.tlschallenge
+            - --certificatesresolvers.default.acme.email=foo@you.com
+            - --certificatesresolvers.default.acme.storage=acme.json
+            # Please note that this is the staging Let's Encrypt server.
+            # Once you get things working, you should remove that whole line altogether.
+            - --certificatesresolvers.default.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory
+            - --certificatesResolvers.5ik8s.acme.dnsChallenge.provider=alidns
+            - --certificatesResolvers.5ik8s.acme.dnsChallenge.delayBeforeCheck=30
+          ports:
+            - name: web
+              containerPort: 80
+            - name: websecure
+              containerPort: 443
+            - name: admin
+              containerPort: 8080
+          securityContext:
+            capabilities:
+              drop:
+              - ALL
+              add:
+              - NET_BIND_SERVICE

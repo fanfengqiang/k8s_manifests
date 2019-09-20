@@ -1,0 +1,36 @@
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: traefik.5ik8s.com
+  namespace: kube-system
+spec:
+  entryPoints:
+    - web
+  routes:
+  - match: Host(`traefik.5ik8s.com`) && PathPrefix(`/`)
+    kind: Rule
+    services:
+    - name: traefik
+      port: 8080
+    middlewares:
+    - name: ffq-passwd
+      namespace: kube-system
+
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: traefik.5ik8s.com-tls
+  namespace: kube-system
+spec:
+  entryPoints:
+    - websecure
+  routes:
+  - match: Host(`traefik.5ik8s.com`) && PathPrefix(`/`)
+    kind: Rule
+    services:
+    - name: traefik
+      port: 8080
+  tls:
+    certResolver: 5ik8s

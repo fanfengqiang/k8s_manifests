@@ -1,0 +1,20 @@
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: dex.5ik8s.com-tls
+  namespace: kube-system
+spec:
+  entryPoints:
+    - websecure
+  routes:
+  - match: Host(`dex.5ik8s.com`) && PathPrefix(`/`)
+    kind: Rule
+    services:
+    - name: dex
+      port: 5556
+  tls:
+    secretName: 5ik8s.com
+#    options:
+#      name: myTLSOption
+#      namespace: kube-system

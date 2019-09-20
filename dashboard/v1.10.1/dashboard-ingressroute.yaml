@@ -1,0 +1,35 @@
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: dashboard.5ik8s.com
+  namespace: kube-system
+spec:
+  entryPoints:
+    - web
+  routes:
+  - match: Host(`dashboard.5ik8s.com`) && PathPrefix(`/`)
+    kind: Rule
+    services:
+    - name: kubernetes-dashboard
+      port: 443
+      scheme: https
+
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: dashboard.5ik8s.com-tls
+  namespace: kube-system
+spec:
+  entryPoints:
+    - websecure
+  routes:
+  - match: Host(`dashboard.5ik8s.com`) && PathPrefix(`/`)
+    kind: Rule
+    services:
+    - name: kubernetes-dashboard
+      port: 443
+      scheme: https
+  tls:
+    certResolver: 5ik8s

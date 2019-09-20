@@ -1,0 +1,18 @@
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: phpldapadmin.5ik8s.com-tls
+  namespace: kube-system
+spec:
+  entryPoints:
+    - websecure
+  routes:
+  - match: Host(`phpldapadmin.5ik8s.com`) && PathPrefix(`/`)
+    kind: Rule
+    services:
+    - name: phpldapadmin
+      port: 443
+      scheme: https
+  tls:
+    certResolver: 5ik8s

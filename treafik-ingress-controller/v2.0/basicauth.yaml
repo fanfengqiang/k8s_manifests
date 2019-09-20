@@ -1,0 +1,16 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: ffq-passwd
+  namespace: kube-system
+spec:
+  basicAuth:
+    secret: ffq-passwd
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ffq-passwd
+  namespace: kube-system
+data:
+  users: ZmZxOiRhcHIxJDBjenl0UGdOJDdiblRYYzU3SFhzekdNcTZtT00vZTAK

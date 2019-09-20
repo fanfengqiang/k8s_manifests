@@ -1,0 +1,17 @@
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: loginapp-ingress
+  namespace: kube-system
+spec:
+  tls:
+   - secretName: 5ik8s.com
+  rules:
+  - host: loginapp.5ik8s.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: loginapp
+          servicePort: 5555

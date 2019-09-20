@@ -110,23 +110,6 @@ spec:
   selector:
     app: dex
 ---
-apiVersion: extensions/v1beta1
-kind: Ingress
-metadata:
-  name: dex-ingress
-  namespace: kube-system
-spec:
-  tls:
-   - secretName: 5ik8s.com
-  rules:
-  - host: dex.5ik8s.com
-    http:
-      paths:
-      - path: /
-        backend:
-          serviceName: dex
-          servicePort: 5556
----
 apiVersion: v1
 kind: ServiceAccount
 metadata:

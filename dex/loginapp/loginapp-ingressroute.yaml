@@ -1,0 +1,17 @@
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: loginapp.5ik8s.com-tls
+  namespace: kube-system
+spec:
+  entryPoints:
+    - websecure
+  routes:
+  - match: Host(`loginapp.5ik8s.com`) && PathPrefix(`/`)
+    kind: Rule
+    services:
+    - name: loginapp
+      port: 5555
+  tls:
+    certResolver: 5ik8s
