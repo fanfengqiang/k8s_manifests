@@ -34,7 +34,7 @@ spec:
           image: traefik:v2.0
           env:
           - name: ALICLOUD_ACCESS_KEY
-            value: LTAIBMluxpeLyzLu
+            value: XXXXXXXXXXXXXXX
           - name: ALICLOUD_SECRET_KEY
             value: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
           args:
