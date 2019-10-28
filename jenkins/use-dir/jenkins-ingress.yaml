@@ -1,0 +1,33 @@
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: jenkins.5ik8s.com
+  namespace: jenkins
+spec:
+  entryPoints:
+    - web
+  routes:
+  - match: Host(`jenkins.5ik8s.com`) && PathPrefix(`/`)
+    kind: Rule
+    services:
+    - name: jenkins
+      port: 8080
+
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: jenkins.5ik8s.com-tls
+  namespace: jenkins
+spec:
+  entryPoints:
+    - websecure
+  routes:
+  - match: Host(`jenkins.5ik8s.com`) && PathPrefix(`/`)
+    kind: Rule
+    services:
+    - name: jenkins
+      port: 8080
+  tls:
+    certResolver: 5ik8s
