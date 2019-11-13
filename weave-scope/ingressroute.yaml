@@ -1,0 +1,18 @@
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: weave.5ik8s.com-tls
+  namespace: weave
+spec:
+  entryPoints:
+    - websecure
+  routes:
+  - match: Host(`weave.5ik8s.com`) && PathPrefix(`/`)
+    kind: Rule
+    services:
+    - name: weave-scope-app
+      port: 80
+      scheme: http
+  tls:
+    certResolver: 5ik8s
