@@ -47,7 +47,7 @@ data:
           HEeAJQc7cmcAw+xyGsWgj5ushQbYMQUogGvFADC4YhG7BPocBm6VcMPMh5nYHyaB
           0NniKlP9NZvM2X6Bf4JKKU9phaozCCT/eYmwKGX/hIy3Po/kdgiFFetLgag=
           -----END CERTIFICATE-----
-        insecure-skip-tls-verify: false
+        insecure-skip-tls-verify: true
 ---
 apiVersion: apps/v1
 kind: Deployment

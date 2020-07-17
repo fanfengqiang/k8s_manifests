@@ -1,0 +1,5 @@
+{
+	"domain": "dex.5ik8s.com",
+	"certUrl": "https://acme-v02.api.letsencrypt.org/acme/cert/03e61c73dac1196c79ed96f61ea3388ea377",
+	"certStableUrl": "https://acme-v02.api.letsencrypt.org/acme/cert/03e61c73dac1196c79ed96f61ea3388ea377"
+}
