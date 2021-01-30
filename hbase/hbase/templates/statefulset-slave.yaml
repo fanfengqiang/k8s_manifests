@@ -1,0 +1,102 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: hbase-slave
+  labels:
+    app: hbase-slave
+    Chart: hbase-{{ $.Chart.Version }}
+spec:
+  selector:
+    matchLabels:
+      app: hbase-slave
+  serviceName: "hbase-slave-service"
+  podManagementPolicy: "Parallel"
+  updateStrategy:
+    type: RollingUpdate
+  replicas: 3
+  template:
+    metadata:
+      name: hbase-slave
+      annotations: {}
+      labels:
+        app: hbase-slave
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - hbase-slave
+            topologyKey: "kubernetes.io/hostname"
+      dnsPolicy: ClusterFirstWithHostNet
+      hostNetwork: {{ $.Values.hostNetwork }}
+      terminationGracePeriodSeconds: 300
+      containers:
+      - name: hbase-slave
+        image: {{ $.Values.image.registry }}/{{ $.Values.image.repository }}:{{ $.Values.image.tag }}
+        imagePullPolicy: {{ $.Values.image.pullPolicy }}
+        env:
+          - name: COMPONENT
+            value: "{{- join "," $.Values.component }}"
+          - name: DN_DIRS
+            value: "{{-  range $index, $dir := $.Values.slave.dnDirs  }}file:///data{{ $index }},{{- end }}"
+          - name: MY_IP
+            valueFrom:
+              fieldRef:
+                fieldPath: status.podIP
+          - name: MY_HOST
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: MASTER_HOSTS
+            value: hbase-master-0.hbase-master-service,hbase-master-1.hbase-master-service,hbase-master-2.hbase-master-service
+          - name: MY_CPU_REQUEST
+            valueFrom:
+              resourceFieldRef:
+                containerName: hbase-slave
+                resource: requests.cpu
+          - name: MY_CPU_LIMIT
+            valueFrom:
+              resourceFieldRef:
+                containerName: hbase-slave
+                resource: limits.cpu
+          - name: MY_MEM_REQUEST
+            valueFrom:
+              resourceFieldRef:
+                containerName: hbase-slave
+                resource: requests.memory
+          - name: MY_MEM_LIMIT
+            valueFrom:
+              resourceFieldRef:
+                containerName: hbase-slave
+                resource: limits.memory
+        resources:
+          {{- toYaml .Values.slave.resources | nindent 10 }}
+        volumeMounts:
+                {{- range $index, $dir := $.Values.slave.dnDirs }}
+        - name: hbase-slave-pv{{ $dir|replace "/" "-" }}
+          mountPath: /data{{ $index }}
+        {{- end }}
+    {{- with .Values.slave.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+  volumeClaimTemplates:
+{{- range $.Values.slave.dnDirs }}
+  - metadata:
+      name: hbase-slave-pv{{.|replace "/" "-" }}
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      storageClassName: hbase-localpv
+      resources:
+        requests:
+          storage: {{ $.Values.slave.storage }}
+      selector:
+        matchLabels:
+          pv: hbase-slave-pv{{.|replace "/" "-" }}
+{{- end }}

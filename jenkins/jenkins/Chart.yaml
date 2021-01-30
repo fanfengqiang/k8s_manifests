@@ -1,0 +1,15 @@
+apiVersion: v1
+appVersion: lts
+deprecated: true
+description: DEPRECATED - Open source continuous integration server. It supports multiple
+  SCM tools including CVS, Subversion and Git. It can execute Apache Ant and Apache
+  Maven-based projects as well as arbitrary scripts.
+home: https://jenkins.io/
+icon: https://wiki.jenkins-ci.org/download/attachments/2916393/logo.png
+name: jenkins
+sources:
+- https://github.com/jenkinsci/jenkins
+- https://github.com/jenkinsci/docker-jnlp-slave
+- https://github.com/maorfr/kube-tasks
+- https://github.com/jenkinsci/configuration-as-code-plugin
+version: 2.5.4

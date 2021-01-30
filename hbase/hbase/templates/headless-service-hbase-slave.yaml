@@ -1,0 +1,14 @@
+---
+apiVersion: "v1"
+kind: "Service"
+metadata:
+  annotations: {}
+  labels:
+    app: "hbase-slave"
+  name: "hbase-slave-service"
+  namespace: "{{ .Release.Namespace }}"
+spec:
+  clusterIP: "None"
+  selector:
+    app: "hbase-slave"
+  type: "ClusterIP"

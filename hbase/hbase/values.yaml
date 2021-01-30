@@ -1,0 +1,71 @@
+# Default values for hbase.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# component can by "hdfs mapreduce hbase"
+component:
+- hdfs
+- mapreduce
+- hbase
+
+hostNetwork: true
+
+image:
+  registry: "register.5ik8s.com"
+  repository: "myhbase/hbase"
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: v0.28
+
+
+master:
+  tolerations:
+  - effect: NoSchedule
+    operator: Exists
+    key: hbase
+  nnDir: /data/hbase-master
+  storage: 5G
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: hbase-master
+          operator: In
+          values:
+          - "1"
+  resources:
+    requests:
+      memory:  4Gi
+      cpu:  1
+    limits:
+      memory:  4Gi
+      cpu:  2
+
+slave:
+  # The count for hbase slave
+  count: 3
+  # dirs of hdfs datanode
+  dnDirs:
+  - /data/disk1
+  - /data/disk2
+  storage: 6G
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: hbase-slave
+          operator: In
+          values:
+          - "1"
+  tolerations:
+    - key: "hbase"
+      operator: "Exists"
+      effect: "NoSchedule"
+  resources:
+    requests:
+      memory:  4Gi
+      cpu:  1
+    limits:
+      memory:  4Gi
+      cpu:  2
+

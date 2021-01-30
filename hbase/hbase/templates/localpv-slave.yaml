@@ -1,0 +1,23 @@
+{{- range $index := until ($.Values.slave.count|int) }}
+{{- range $.Values.slave.dnDirs }}
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: hbase-slave-pv-{{  $index  }}{{.|replace "/" "-" }}
+  labels:
+    pv: hbase-slave-pv{{.|replace "/" "-" }}
+spec:
+  capacity:
+    storage: {{ $.Values.slave.storage }}
+  accessModes:
+  - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: hbase-localpv
+  local:
+    path: {{. }}
+  nodeAffinity:
+{{ toYaml $.Values.slave.nodeAffinity|indent 4 }}
+
+{{- end }}
+{{- end }}

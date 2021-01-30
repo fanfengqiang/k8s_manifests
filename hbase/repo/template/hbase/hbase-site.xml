@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+
+<configuration>
+  <!-- 指定hbase是分布式的 -->
+  <property>
+    <name>hbase.cluster.distributed</name>
+    <value>true</value>
+  </property>
+  <!-- 指定hbase在HDFS上存储的路径 -->
+  <property>
+    <name>hbase.tmp.dir</name>
+    <value>hdfs://mycluster/hbase</value>
+  </property>
+<!-- 指定zk的地址，多个用“,”分割 -->
+<property>
+    <name>hbase.zookeeper.quorum</name>
+    <value>hadoop1:2181,hadoop2:2181,hadoop3:2181</value>
+</property>
+<property>
+<name>zookeeper.znode.parent</name>
+<value>/hbase</value>
+</property>
+  <property>
+    <name>hbase.unsafe.stream.capability.enforce</name>
+    <value>false</value>
+  </property>
+</configuration>

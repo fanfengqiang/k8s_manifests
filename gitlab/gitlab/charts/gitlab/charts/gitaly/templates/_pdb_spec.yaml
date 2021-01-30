@@ -1,0 +1,14 @@
+{{- $praefect := .Values.global.praefect.enabled -}}
+spec:
+  {{- if $praefect }}
+  maxUnavailable: {{ default .Values.maxUnavailable .storage.maxUnavailable }}
+  {{- else }}
+  maxUnavailable:  {{ .Values.maxUnavailable }}
+  {{- end }}
+  selector:
+    matchLabels:
+      app: {{ template "name" . }}
+      release: {{ .Release.Name }}
+      {{- if $praefect }}
+      storage: {{ .storage.name }}
+      {{- end }}

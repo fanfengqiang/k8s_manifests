@@ -1,0 +1,115 @@
+<?xml version="1.0"?>
+
+<configuration>
+<!-- 开启RM高可用 -->
+<property>
+<name>yarn.resourcemanager.ha.enabled</name>
+<value>true</value>
+</property>
+
+<!-- 指定RM的cluster id -->
+<property>
+<name>yarn.resourcemanager.cluster-id</name>
+<value>yrc</value>
+</property>
+<!-- 指定RM的逻辑名字 -->
+<property>
+<name>yarn.resourcemanager.ha.rm-ids</name>
+<value>rm1,rm2</value>
+</property>
+<!-- 分别指定RM的地址 -->
+<property>
+<name>yarn.resourcemanager.hostname.rm1</name>
+<value>hadoop1</value>
+</property>
+<property>
+<name>yarn.resourcemanager.hostname.rm2</name>
+<value>hadoop2</value>
+</property>
+<!-- 配置yarn WEB访问端口 -->
+<property>
+<name>yarn.resourcemanager.scheduler.address.rm1</name>
+<value>hadoop1:8030</value>
+</property>
+<property>
+<name>yarn.resourcemanager.resource-tracker.address.rm1</name>
+<value>hadoop1:8031</value>
+</property>
+<property>
+<name>yarn.resourcemanager.address.rm1</name>
+<value>hadoop1:8032</value>
+</property>
+<property>
+<name>yarn.resourcemanager.admin.address.rm1</name>
+<value>hadoop1:8033</value>
+</property>
+<property>
+<name>yarn.resourcemanager.webapp.address.rm1</name>
+<value>hadoop1:8088</value>
+</property>
+<property>
+<name>yarn.resourcemanager.ha.admin.address.rm1</name>
+<value>hadoop1:23142</value>
+</property>
+
+<property>
+<name>yarn.resourcemanager.scheduler.address.rm2</name>
+<value>hadoop2:8030</value>
+</property>
+<property>
+<name>yarn.resourcemanager.resource-tracker.address.rm2</name>
+<value>hadoop2:8031</value>
+</property>
+<property>
+<name>yarn.resourcemanager.address.rm2</name>
+<value>hadoop2:8032</value>
+</property>
+<property>
+<name>yarn.resourcemanager.admin.address.rm2</name>
+<value>hadoop2:8033</value>
+</property>
+<property>
+<name>yarn.resourcemanager.webapp.address.rm2</name>
+<value>hadoop2:8088</value>
+</property>
+<property>
+<name>yarn.resourcemanager.ha.admin.address.rm2</name>
+<value>hadoop2:23142</value>
+</property>
+
+
+	<!-- 指定zk集群地址 -->
+	<property>
+		<name>yarn.resourcemanager.zk-address</name>
+		<value>hadoop1:2181,hadoop2:2181,hadoop3:2181</value>
+	</property>
+ 
+ 
+	<property>
+		<name>yarn.nodemanager.aux-services</name>
+		<value>mapreduce_shuffle</value>
+	</property>
+ 
+	<property>
+		<name>yarn.log-aggregation-enable</name>
+		<value>true</value>
+	</property>
+ 
+	<property>
+		<name>yarn.log-aggregation.retain-seconds</name>
+		<value>86400</value>
+	</property>
+ 
+	<!-- 启用自动恢复 -->
+	<property>
+		<name>yarn.resourcemanager.recovery.enabled</name>
+		<value>true</value>
+	</property>
+ 
+	<!-- 制定resourcemanager的状态信息存储在zookeeper集群上 -->
+	<property>
+		<name>yarn.resourcemanager.store.class</name>
+		<value>org.apache.hadoop.yarn.server.resourcemanager.recovery.ZKRMStateStore</value>
+	</property>
+
+</configuration>

@@ -1,0 +1,106 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: hbase-master
+  labels:
+    app: hbase-master
+    Chart: hbase-{{ $.Chart.Version }}
+spec:
+  selector:
+    matchLabels:
+      app: hbase-master
+  serviceName: "hbase-master-service"
+  podManagementPolicy: "Parallel"
+  updateStrategy:
+    type: RollingUpdate
+  replicas: 3
+  template:
+    metadata:
+      name: hbase-master
+      annotations: {}
+      labels:
+        app: hbase-master
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - hbase-master
+            topologyKey: "kubernetes.io/hostname"
+      dnsPolicy: ClusterFirstWithHostNet
+      hostNetwork: {{ $.Values.hostNetwork }}
+      terminationGracePeriodSeconds: 300
+      #initContainers:
+      #- name: init-myservice
+      #  image: {{ $.Values.image.registry }}/{{ $.Values.image.repository }}:{{ $.Values.image.tag }}
+      #  imagePullPolicy: {{ $.Values.image.pullPolicy }}
+      #  command: ["sh","-c","chown -R hadoop:hadoop /home/hadoop"]
+      #  volumeMounts:
+      #  - name: hbase-master-nndir
+      #    mountPath: /home/hadoop/cluster-data
+      containers:
+      - name: hbase-master
+        image: {{ $.Values.image.registry }}/{{ $.Values.image.repository }}:{{ $.Values.image.tag }}
+        imagePullPolicy: {{ $.Values.image.pullPolicy }}
+        #command: ["/bin/sh"]
+        #args: ["-c", "while true; do echo hello; sleep 10;done"]
+        env:
+          - name: COMPONENT
+            value: "{{- join "," $.Values.component }}"
+          - name: MY_IP
+            valueFrom:
+              fieldRef:
+                fieldPath: status.podIP
+          - name: MY_HOST
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: MASTER_HOSTS
+            value: hbase-master-0.hbase-master-service,hbase-master-1.hbase-master-service,hbase-master-2.hbase-master-service
+          - name: MY_CPU_REQUEST
+            valueFrom:
+              resourceFieldRef:
+                containerName: hbase-master
+                resource: requests.cpu
+          - name: MY_CPU_LIMIT
+            valueFrom:
+              resourceFieldRef:
+                containerName: hbase-master
+                resource: limits.cpu
+          - name: MY_MEM_REQUEST
+            valueFrom:
+              resourceFieldRef:
+                containerName: hbase-master
+                resource: requests.memory
+          - name: MY_MEM_LIMIT
+            valueFrom:
+              resourceFieldRef:
+                containerName: hbase-master
+                resource: limits.memory
+        resources:
+          {{- toYaml .Values.master.resources | nindent 10 }}
+        volumeMounts:
+        - name: hbase-master-nndir
+          mountPath: /home/hadoop/cluster-data
+    {{- with .Values.master.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+  volumeClaimTemplates:
+  - metadata:
+      name: hbase-master-nndir
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      storageClassName: hbase-localpv
+      resources:
+        requests:
+          storage: {{ $.Values.master.storage }}
+      selector:
+        matchLabels:
+          pv: hbase-master-pv
